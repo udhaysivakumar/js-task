@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #quiz-container{
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: sans-serif;
+        }
+        .btn{
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10PX;
+            background: #f0f0f0;
+            border:none;
+            border-radius: 5px;
+            cursor: pointer;
+
+        }
+        .correct{
+            background: #9aeabc;
+        }
+        .incorrect{
+            background: #ffb3b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <h2 id="question">Question Text</h2>
+        <div id="answers">
+
+        </div>
+        <button id="next-btn" class="btn">Next</button>
+    </div>
+    <script>
+        
+        const questions= [{
+
+            question: "which keyword is used to declare a variable inn javascrip?",
+            answers: [
+                
+                    {text:"let",correct:false},
+                    {text:"var",correct:false},
+                    {text:"const",correct:true},
+                    {text:"ststic",correct:false},
+                    
+                
+            ]
+        },
+        {
+            question: "what will your typeof null return?",
+            answers: [
+                
+                    {text:"null",correct:false},
+                    {text:"object",correct:true},
+                    {text:"undefined",correct:false},
+                    {text:"number",correct:false},
+                    
+                
+            ]
+        },
+            {
+            question: "which symbol is used for single-line comments in javascript?",
+            answers: [
+                
+                    {text:"<!-->",correct:false},
+                    {text:"/**/",correct:false},
+                    {text:"//",correct:true},
+                    {text:"#",correct:false},
+                    
+                
+            ]
+        },
+        {
+            question: "which mwthod is used to used to print output in the browser connsole?",
+            answers: [
+                
+                    {text:"print()",correct:false},
+                    {text:"document.write",correct:false},
+                    {text:"console.log",correct:true},
+                    {text:"number",correct:false},
+                    
+                
+            ]
+        },
+        {
+            question: "what is the result of 5+'5'in js?",
+            answers: [
+                
+                    {text:"10",correct:false},
+                    {text:"'10'",correct:false},
+                    {text:"'55'",correct:true},
+                    {text:"Error",correct:false},
+                    
+                
+            ]
+        },{
+            question: "which loop is guaranteed to execute at least once?",
+            answers: [
+                
+                    {text:"for",correct:false},
+                    {text:"while",correct:false},
+                    {text:"do..while",correct:true},
+                    {text:"foreach",correct:false},
+                    
+                
+            ]
+        },
+
+        {
+            question: "what does === operator check?",
+            answers: [
+                
+                    {text:"value only",correct:false},
+                    {text:"type only",correct:false},
+                    {text:"value and type",correct:true},
+                    {text:"reference only",correct:false},
+            ]
+        },
+        {
+            question: "which function convert a string to a integer?",
+            answers: [
+                
+                    {text:"tostring()",correct:false},
+                    {text:"parseint()",correct:true},
+                    {text:"parseFloat()",correct:false},
+                    {text:"number",correct:false},
+                    
+                
+            ]
+        },{
+            question: "which array method adds an element at the end?",
+            answers: [
+                
+                    {text:"push",correct:true},
+                    {text:"pop",correct:false},
+                    {text:"shift",correct:false},
+                    {text:"unnshift",correct:false},
+                    
+                
+            ]
+        },
+        {
+            question: "how do you declare an arrow function?",
+            answers: [
+                
+                    {text:"function=>myfund()",correct:false},
+                    {text:"myfunc()=>{}",correct:false},
+                    {text:"const myfunc=()=>{}",correct:true},
+                    {text:"arrow myfunc",correct:false},
+                    
+                
+            ]
+        },
+    ]
+        const questionElement =document.getElementById("question");
+        const answerButtons =document.getElementById("answers");
+        const nextButton = document.getElementById("next-btn");
+        let currentQuestionIndex= 0;
+        let score = 0;
+        nextButton. disabled =true;
+
+        function startQuiz(){
+            //nextButton.disabled =true;
+            nextButton.removeEventListener("click",startQuiz);
+            currentQuestionIndex = 0;
+            score = 0;
+            nextButton.textContent = "Next";
+
+        }
+
+        showQuestion();
+
+        function showQuestion(){
+            //resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            currentQuestion.answers.forEach((ans)=> {
+                const button = document.createElement("button");
+                button.textContent = ans.text;
+                button.classList.add("btn")
+                answerButtons.appendChild(button);
+                if(ans.correct){
+                    button.dataset.correct = ans.correct;
+                }
+                button.addEventListener("click",selectAnswer)
+            })
+        }
+        function selectAnswer(e){
+            const selectButton= e.target;
+            const selectedIsCorrect =selectButton.dataset.correct === "true";
+            if (selectedIsCorrect){
+                score++;
+            }
+            Array.from(answerButtons.children).forEach(btn =>{
+                const isCorrect =btn.dataset.correct;
+                if(isCorrect){
+                    btn.classList.add("correct");
+                    
+                }
+                else{
+                    btn.classList.add("incorrect");
+
+                }
+                btn.disabled = true;
+            })
+            console.log(score)
+            nextButton.disabled = false;
+        }
+        nextButton.addEventListener("click",()=>{
+            currentQuestionIndex++;
+            resetState();
+            if(currentQuestionIndex < questions.length){
+                showQuestion();
+            }
+            else{
+                showScore();
+            }
+        })
+        function showScore(){
+            //resetState()
+            questionElement.textContent = `you scored ${score} out of ${questions.length}`
+            nextButton.disabled =false;
+            nextButton .textContent = "play again";
+            nextButton.addEventListener("click",startQuiz);
+        }
+
+        function resetState(){
+            nextButton.disabled =true;
+            while(answerButtons.firstChild){
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+        }
+        startQuiz();
+    </script>
+    </body>
+    </html>
